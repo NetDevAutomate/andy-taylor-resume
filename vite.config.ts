@@ -12,7 +12,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react-dom') || (id.includes('react') && !id.includes('react-markdown') && !id.includes('react-router'))) {
+            if (id.includes('react-dom') || (id.includes('react') && !id.includes('react-router'))) {
               return 'vendor-react'
             }
             if (id.includes('react-router') || id.includes('@remix-run')) {
@@ -21,8 +21,6 @@ export default defineConfig({
             if (id.includes('motion')) {
               return 'vendor-motion'
             }
-            // react-markdown and its deps (remark, rehype, mdast, micromark, unified, unist, hast)
-            // are NOT in manualChunks — they bundle with FloatingChat's lazy chunk automatically
           }
         },
       },
