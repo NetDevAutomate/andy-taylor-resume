@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'motion/react'
 import {
   Mail, ExternalLink, Briefcase, Award, Code, Globe, Zap,
   Github, FolderGit2, Star, Terminal, List, ArrowUp, Mic,
-  FileText, GitFork, MapPin,
+  FileText, GitFork, MapPin, ChevronLeft, ChevronRight,
+  Headphones, Video, Image, Presentation, Quote, MessageSquareQuote,
 } from 'lucide-react'
 import { translations, seo } from './i18n'
 import { getTechIcon } from './tech-icons'
@@ -243,6 +244,7 @@ function useTypewriterRotation(
 
 const HOME_TOC_SECTIONS = [
   { id: 'experience', label: 'Experience' },
+  { id: 'recommendations', label: 'Recommendations' },
   { id: 'awards', label: 'Awards' },
   { id: 'speaking', label: 'Speaking' },
   { id: 'opensource', label: 'Open Source' },
@@ -456,6 +458,183 @@ function SectionHeading({ icon, children }: { icon: React.ReactNode; children: R
 }
 
 // ---------------------------------------------------------------------------
+// Artefacts Carousel — fetches manifest.json, renders draggable card strip
+// ---------------------------------------------------------------------------
+
+const ARTEFACTS_BASE = 'https://artefacts.netdevautomate.dev'
+const ARTEFACT_ICONS: Record<string, React.ReactNode> = {
+  audio: <Headphones className="w-3 h-3" />,
+  video: <Video className="w-3 h-3" />,
+  infographic: <Image className="w-3 h-3" />,
+  slides: <Presentation className="w-3 h-3" />,
+}
+
+interface ArtefactRepo {
+  name: string
+  title: string
+  artefacts: string[]
+  updated: string
+}
+
+function useArtefacts() {
+  const [repos, setRepos] = useState<ArtefactRepo[]>([])
+  useEffect(() => {
+    fetch(`${ARTEFACTS_BASE}/manifest.json`)
+      .then(r => r.json())
+      .then((d: { repos: ArtefactRepo[] }) => setRepos(d.repos))
+      .catch(() => {})
+  }, [])
+  return repos
+}
+
+function ArtefactsCarousel() {
+  const repos = useArtefacts()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+  const autoplayRef = useRef<ReturnType<typeof setInterval>>(undefined)
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 4)
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    checkScroll()
+    el.addEventListener('scroll', checkScroll, { passive: true })
+    window.addEventListener('resize', checkScroll, { passive: true })
+    return () => {
+      el.removeEventListener('scroll', checkScroll)
+      window.removeEventListener('resize', checkScroll)
+    }
+  }, [repos, checkScroll])
+
+  // Auto-advance every 4s, pause on hover/touch
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el || repos.length === 0) return
+    const start = () => {
+      autoplayRef.current = setInterval(() => {
+        if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 4) {
+          el.scrollTo({ left: 0, behavior: 'smooth' })
+        } else {
+          el.scrollBy({ left: 320, behavior: 'smooth' })
+        }
+      }, 4000)
+    }
+    const stop = () => clearInterval(autoplayRef.current)
+    start()
+    el.addEventListener('pointerenter', stop)
+    el.addEventListener('pointerleave', start)
+    return () => { stop(); el.removeEventListener('pointerenter', stop); el.removeEventListener('pointerleave', start) }
+  }, [repos])
+
+  const scroll = (dir: -1 | 1) => {
+    scrollRef.current?.scrollBy({ left: dir * 320, behavior: 'smooth' })
+  }
+
+  if (repos.length === 0) return null
+
+  return (
+    <div className="relative group/carousel">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-display font-semibold text-lg flex items-center gap-2">
+          <Terminal className="w-4 h-4 text-primary" />
+          {t.artefacts.title}
+        </h3>
+        <a
+          href={t.artefacts.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-muted-foreground hover:text-accent transition-colors flex items-center gap-1"
+        >
+          View all
+          <ExternalLink className="w-3 h-3" />
+        </a>
+      </div>
+      <p className="text-sm text-muted-foreground mb-5">{t.artefacts.desc}</p>
+
+      {/* Scroll container */}
+      <div
+        ref={scrollRef}
+        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 -mx-2 px-2"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+      >
+        {repos.map((repo) => (
+          <a
+            key={repo.name}
+            href={`${ARTEFACTS_BASE}/${repo.name}/artefacts/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="snap-start shrink-0 w-[280px] rounded-xl bg-card border border-border hover:border-accent/50 transition-all duration-300 overflow-hidden group/card hover:shadow-lg hover:shadow-accent/5"
+          >
+            {/* Thumbnail */}
+            <div className="relative w-full h-[160px] bg-muted/50 overflow-hidden">
+              {repo.artefacts.includes('infographic') && (
+                <img
+                  src={`${ARTEFACTS_BASE}/${repo.name}/artefacts/infographic.png`}
+                  alt={`${repo.title} infographic`}
+                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover/card:scale-105"
+                  loading="lazy"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />
+            </div>
+
+            {/* Content */}
+            <div className="p-4">
+              <h4 className="font-semibold text-sm mb-2 group-hover/card:text-accent transition-colors truncate">
+                {repo.title}
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {repo.artefacts.map((type) => (
+                  <span
+                    key={type}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-accent/10 text-accent border border-accent/20"
+                  >
+                    {ARTEFACT_ICONS[type]}
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Navigation arrows */}
+      {canScrollLeft && (
+        <button
+          onClick={() => scroll(-1)}
+          className="absolute left-0 top-[calc(50%+20px)] -translate-y-1/2 -translate-x-3 w-9 h-9 rounded-full bg-card/90 border border-border shadow-lg flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-200 hover:bg-accent/10 hover:border-accent/40 z-10"
+          aria-label="Previous"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+      )}
+      {canScrollRight && (
+        <button
+          onClick={() => scroll(1)}
+          className="absolute right-0 top-[calc(50%+20px)] -translate-y-1/2 translate-x-3 w-9 h-9 rounded-full bg-card/90 border border-border shadow-lg flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-200 hover:bg-accent/10 hover:border-accent/40 z-10"
+          aria-label="Next"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      )}
+
+      {/* Fade edges */}
+      {canScrollLeft && <div className="absolute left-0 top-[60px] bottom-2 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none z-[5]" />}
+      {canScrollRight && <div className="absolute right-0 top-[60px] bottom-2 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-[5]" />}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // App
 // ---------------------------------------------------------------------------
 
@@ -655,9 +834,39 @@ function App() {
       </section>
 
       {/* ------------------------------------------------------------------ */}
+      {/* Recommendations                                                      */}
+      {/* ------------------------------------------------------------------ */}
+      <section id="recommendations" className="py-16 md:py-24" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 500px' }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <AnimatedSection>
+            <SectionHeading icon={<MessageSquareQuote className="w-5 h-5 text-primary" />}>
+              {t.recommendations.title}
+            </SectionHeading>
+          </AnimatedSection>
+          <div className="grid md:grid-cols-2 gap-5">
+            {t.recommendations.items.map((rec, i) => (
+              <AnimatedSection key={i} delay={0.1 * (i + 1)}>
+                <div className="h-full p-6 rounded-2xl bg-card border border-border hover:border-primary/20 transition-colors relative">
+                  <Quote className="absolute top-4 right-4 w-8 h-8 text-primary/10" aria-hidden="true" />
+                  <blockquote className="text-sm text-muted-foreground leading-relaxed mb-4 relative z-10">
+                    &ldquo;{rec.quote}&rdquo;
+                  </blockquote>
+                  <div className="border-t border-border pt-3 mt-auto">
+                    <p className="font-semibold text-sm">{rec.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{rec.title}</p>
+                    <p className="text-xs text-primary/70 mt-1">{rec.context} &middot; {rec.date}</p>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
       {/* Awards                                                               */}
       {/* ------------------------------------------------------------------ */}
-      <section id="awards" className="py-16 md:py-24" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 400px' }}>
+      <section id="awards" className="py-16 md:py-24 bg-muted/30" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 400px' }}>
         <div className="max-w-5xl mx-auto px-6">
           <AnimatedSection>
             <SectionHeading icon={<Award className="w-5 h-5 text-primary" />}>
@@ -816,25 +1025,9 @@ function App() {
             </div>
           </AnimatedSection>
 
-          {/* Artefacts */}
+          {/* Artefacts Carousel */}
           <AnimatedSection delay={0.2} className="mt-10">
-            <a
-              href={t.artefacts.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block p-6 rounded-2xl bg-gradient-to-br from-accent/10 via-accent/5 to-transparent border border-accent/30 hover:border-accent/60 transition-colors group"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="font-display font-bold text-lg mb-1 group-hover:text-accent transition-colors">{t.artefacts.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-3">{t.artefacts.desc}</p>
-                  <span className="inline-flex items-center gap-1.5 text-sm text-accent font-medium">
-                    {t.artefacts.linkText}
-                    <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-                  </span>
-                </div>
-              </div>
-            </a>
+            <ArtefactsCarousel />
           </AnimatedSection>
         </div>
       </section>

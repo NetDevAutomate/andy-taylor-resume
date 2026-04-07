@@ -189,6 +189,40 @@ export const translations = {
     ],
   },
 
+  recommendations: {
+    title: 'Recommendations',
+    items: [
+      {
+        name: 'Rob Wilkins',
+        title: 'Executive Technology Leader | CTO | CIO | Technology Director',
+        context: 'Reported to Andy directly',
+        date: 'October 2018',
+        quote: 'Andy is technically superb, his range of knowledge is second to none and he has an incredible ability to take on new technologies and concepts with apparent ease. In addition his attention to detail and desire to drive projects forward make him a huge asset to any team. I have worked with Andy for over 10 years now on a wide range of large & complex projects and would continue to do so at any given opportunity.',
+      },
+      {
+        name: 'Darren Worvill',
+        title: 'Principal Solution Architect',
+        context: 'Worked with Andy on the same team',
+        date: 'September 2018',
+        quote: 'Andy is a strong leader who\'s not afraid to pursue issues and drive them forward, this combined with his broad range of technical skills and focus on automation would make him a key member of any project team, as well as an excellent candidate for any technical leadership role. Having worked with Andy, I know his core network experience in large enterprises and passion for automation will make him a valued asset of any large enterprise.',
+      },
+      {
+        name: 'Byron Chen',
+        title: 'Infrastructure Transformation Consultant | Global Network & Data Centre Strategy',
+        context: 'Worked with Andy on the same team',
+        date: 'October 2009',
+        quote: 'Andy is a first class engineer with skills and experience not just limited to Network Security. He is results driven and keeps his eye on the ball at all time with excellent project management.',
+      },
+      {
+        name: 'Jason Bond',
+        title: 'IT Domain Security Architect at RBA',
+        context: 'Senior to Andy',
+        date: 'April 2009',
+        quote: 'Andy proved himself to be a very capable network and security engineer. I would have no hesitation to recommend him for Principal engineering roles.',
+      },
+    ],
+  },
+
   awards: {
     title: 'Industry Awards',
     items: [
