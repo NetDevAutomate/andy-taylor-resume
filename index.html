@@ -92,7 +92,9 @@
             "Infrastructure as Code", "Terraform", "Pulumi", "AWS CDK", "CloudFormation",
             "Network Security", "Data Centre Design", "BGP", "OSPF", "SD-WAN",
             "Python", "TypeScript", "Golang", "Cisco ACI", "Palo Alto", "Check Point",
-            "Open Source", "NetDevOps", "Network Automation"
+            "Open Source", "NetDevOps", "Network Automation",
+            "Model Context Protocol", "Agentic AI", "GraphRAG", "Knowledge Graphs",
+            "Amazon Bedrock", "Claude", "LLM Engineering", "Neo4j"
           ],
           "award": [
             "HashiCorp Core Contributor 2023",
@@ -104,7 +106,51 @@
             "https://github.com/NetDevAutomate",
             "https://artefacts.netdevautomate.dev"
           ],
-          "address": { "@type": "PostalAddress", "addressLocality": "Surrey", "addressCountry": "GB" }
+          "address": { "@type": "PostalAddress", "addressLocality": "Surrey", "addressCountry": "GB" },
+          "subjectOf": [
+            {
+              "@type": "SoftwareSourceCode",
+              "name": "AWS Core Network MCP Server",
+              "description": "Model Context Protocol server with 27 read-only tools for troubleshooting AWS Cloud WAN, Transit Gateway, VPC, Network Firewall and Site-to-Site VPN. Presented as re:Invent 2025 Code Talk NET331.",
+              "codeRepository": "https://github.com/awslabs/mcp/tree/main/src/aws-network-mcp-server",
+              "programmingLanguage": "Python",
+              "keywords": ["MCP", "Cloud WAN", "Transit Gateway", "Network Firewall", "VPC", "AWS", "Agentic AI"],
+              "video": {
+                "@type": "VideoObject",
+                "name": "AWS Cloud WAN MCP Server: Transform Network Operations with GenAI (NET331)",
+                "description": "AWS re:Invent 2025 Code Talk covering the AWS Core Network MCP Server.",
+                "url": "https://www.youtube.com/watch?v=7e4UeHMMOXo",
+                "embedUrl": "https://www.youtube.com/embed/7e4UeHMMOXo",
+                "uploadDate": "2025-12-01",
+                "publisher": { "@type": "Organization", "name": "Amazon Web Services" }
+              }
+            },
+            {
+              "@type": "SoftwareApplication",
+              "name": "Agentic Opportunities Pipeline",
+              "description": "GraphRAG pipeline correlating Salesforce, SpecReq and SIFT field insights to surface specialist-team opportunity gaps across AWS technology verticals.",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "macOS, Linux",
+              "keywords": ["GraphRAG", "Knowledge Graph", "Bedrock", "Claude", "Salesforce", "Analytics"]
+            },
+            {
+              "@type": "SoftwareApplication",
+              "name": "mailgraph",
+              "description": "Local-first personal knowledge graph over email, calendar, attachments and notes — 73K entities, 206K relationships. LightRAG on Neo4j + PostgreSQL with Claude on Bedrock for extraction; MCP server exposing 8 agent tools.",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "macOS, Linux",
+              "keywords": ["GraphRAG", "Neo4j", "LightRAG", "MCP", "Knowledge Graph", "Bedrock"]
+            },
+            {
+              "@type": "SoftwareApplication",
+              "name": "Socratic Study Mentor",
+              "description": "AuDHD-aware study toolkit with Socratic AI sessions across seven agent platforms, NotebookLM content pipeline, SM-2 spaced repetition and cross-session analytics.",
+              "applicationCategory": "EducationalApplication",
+              "operatingSystem": "macOS, Linux",
+              "codeRepository": "https://github.com/NetDevAutomate/socratic-study-mentor",
+              "keywords": ["Open Source", "Python", "AI Agents", "Spaced Repetition", "AuDHD"]
+            }
+          ]
         },
         {
           "@type": "FAQPage",

@@ -247,6 +247,7 @@ const HOME_TOC_SECTIONS = [
   { id: 'recommendations', label: 'Recommendations' },
   { id: 'awards', label: 'Awards' },
   { id: 'speaking', label: 'Speaking' },
+  { id: 'projects', label: 'Projects' },
   { id: 'opensource', label: 'Open Source' },
   { id: 'tech', label: 'Skills & Stack' },
   { id: 'contact', label: 'Contact' },
@@ -905,8 +906,79 @@ function App() {
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors group">
                   <span className="text-xs font-mono text-primary font-medium shrink-0 pt-0.5">{talk.year}</span>
                   <div className="flex-1">
-                    <p className="font-semibold group-hover:text-primary transition-colors mb-0.5">{talk.title}</p>
+                    {talk.url ? (
+                      <a
+                        href={talk.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold group-hover:text-primary transition-colors mb-0.5 inline-flex items-center gap-1.5 hover:underline"
+                      >
+                        {talk.title}
+                        <Video className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <p className="font-semibold group-hover:text-primary transition-colors mb-0.5">{talk.title}</p>
+                    )}
                     <p className="text-sm text-muted-foreground">{talk.event}</p>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Projects                                                             */}
+      {/* ------------------------------------------------------------------ */}
+      <section id="projects" className="py-16 md:py-24" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 900px' }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <AnimatedSection>
+            <SectionHeading icon={<Code className="w-5 h-5 text-primary" />}>
+              {t.projects.title}
+            </SectionHeading>
+            <p className="text-sm text-muted-foreground mb-8 max-w-2xl">{t.projects.intro}</p>
+          </AnimatedSection>
+          <div className="grid md:grid-cols-2 gap-5">
+            {t.projects.items.map((project, i) => (
+              <AnimatedSection key={i} delay={0.08 * (i + 1)}>
+                <div className="h-full p-6 rounded-2xl bg-card border border-border hover:border-primary/30 transition-colors flex flex-col">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <h3 className="font-display font-bold text-lg leading-tight">{project.name}</h3>
+                    <span className="text-xs font-mono text-muted-foreground shrink-0 pt-1">{project.year}</span>
+                  </div>
+                  <p className="text-xs font-medium text-primary mb-3 uppercase tracking-wide">{project.tag}</p>
+                  <p className="text-sm text-muted-foreground mb-4 flex-1">{project.desc}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {project.tech.map((t, j) => (
+                      <span key={j} className="text-xs px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground">{t}</span>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                    {project.href && (
+                      <a
+                        href={project.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                      >
+                        <Github className="w-3.5 h-3.5" aria-hidden="true" />
+                        {project.linkText}
+                        <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                      </a>
+                    )}
+                    {project.talkHref && (
+                      <a
+                        href={project.talkHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                      >
+                        <Video className="w-3.5 h-3.5" aria-hidden="true" />
+                        {project.talkLinkText}
+                        <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                      </a>
+                    )}
                   </div>
                 </div>
               </AnimatedSection>
